@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingplayer Style Ludo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d0f12;
+      color: #f4f4f5;
+      padding-bottom: 76px;
+    }
+    .shell {
+      max-width: 460px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #12151b;
+      padding: 12px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #181c24;
+      border: 1px solid #4a3b18;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-k {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(145deg, #f7d060, #b8861b);
+      color: #111;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .bal-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .bal-pill {
+      background: #221d11;
+      border: 1px solid #9e7922;
+      color: #f7d060;
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .card {
+      background: #181c24;
+      border: 1px solid #3c3116;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .notice {
+      background: #231d10;
+      border: 1px solid #7d5e18;
+      color: #fcd34d;
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .modes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mode-card {
+      background: #1e232e;
+      border: 1px solid #b88c28;
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+    }
+    .mode-card.locked {
+      opacity: 0.72;
+      border-color: #4b5563;
+      cursor: not-allowed;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .live { background: #14532d; color: #86efac; }
+    .soon { background: #451a03; color: #fcd34d; }
+    .mode-title {
+      font-weight: bold;
+      font-size: 14px;
+      color: #f7d060;
+    }
+    .refer-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1d212b;
+      border: 1px solid #9e7922;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 9px;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+    input, select {
+      background: #101318;
+      color: #fff;
+      border: 1px solid #374151;
+    }
+    button.gold {
+      background: linear-gradient(145deg, #f7d060, #c89420);
+      color: #111;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+    button.dark {
+      background: #272d3b;
+      color: #f4f4f5;
+      border: 1px solid #4b5563;
+      cursor: pointer;
+    }
+    .battle-row {
+      background: #1e232e;
+      border: 1px solid #6f5519;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 460px;
+      background: #151920;
+      border-top: 1px solid #4a3b18;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .bottom-nav button {
+      margin: 0;
+      padding: 10px 2px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      color: #9ca3af;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .bottom-nav button.active {
+      color: #f7d060;
+      background: #202530;
+    }
+    .hidden { display: none; }
+    img.preview {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 8px;
+      border: 1px solid #4b5563;
+    }
+    .muted { color: #9ca3af; font-size: 12px; }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <!-- Login Card -->
+  <div id="loginView" class="card">
+    <div class="brand-left" style="margin-bottom:10px;">
+      <div class="logo-k">K</div>
+      <div>
+        <div style="font-weight:bold;color:#f7d060;">SIM OTP Login</div>
+        <div class="muted">Apni purani ID aur balance waise hi continue honge</div>
+      </div>
+    </div>
+    <input id="phoneInput" placeholder="Mobile number daalein" />
+    <button class="gold" onclick="sendOtp()">Send OTP</button>
+    <div id="demoOtpHint" class="muted" style="margin-top:6px;color:#fcd34d;"></div>
+    <input id="otpInput" placeholder="6-digit OTP daalein" />
+    <input id="nameInput" placeholder="Naam (naya user ho toh)" />
+    <button class="gold" onclick="verifyOtp()">Verify & Enter</button>
+  </div>
+
+  <!-- Main App -->
+  <div id="appView" class="hidden">
+    <div class="topbar">
+      <div class="brand-left">
+        <div class="logo-k">K</div>
+        <div>
+          <div id="topName" style="font-weight:bold;font-size:13px;"></div>
+          <div id="topId" class="muted"></div>
+        </div>
+      </div>
+      <div class="bal-group">
+        <div class="bal-pill">₹<span id="topWallet">0</span></div>
+        <div class="bal-pill">₹<span id="topBonus">0</span></div>
+      </div>
+    </div>
+
+    <div class="notice" id="noticeBox"></div>
+
+    <!-- HOME -->
+    <div id="tab-home">
+      <div class="card">
+        <div style="font-size:12px;color:#f7d060;font-weight:bold;">GAMES</div>
+        <div class="muted">Choose a mode</div>
+        <div class="modes-grid" id="modesGrid"></div>
+      </div>
+
+      <div class="refer-box" onclick="goTab('refer')">
+        <div>
+          <div style="font-size:12px;color:#9ca3af;">REFER & EARN</div>
+          <div id="referText" style="font-weight:bold;color:#f7d060;font-size:13px;"></div>
+        </div>
+        <div style="color:#f7d060;font-weight:bold;">&gt;</div>
+      </div>
+    </div>
+
+    <!-- BATTLE LOBBY -->
+    <div id="tab-lobby" class="hidden">
+      <div class="card">
+        <div class="muted" style="color:#f7d060;">BATTLE LOBBY</div>
+        <h3 style="margin:4px 0;">CREATE BATTLE</h3>
+        <div class="muted">Set amount and jump into a quick match.</div>
+        <input id="entryAmountInput" type="number" placeholder="₹ ENTER AMOUNT" />
+        <button class="gold" onclick="createBattle()">SET</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 4px;">OPEN BATTLES</h3>
+        <div class="muted">Join fresh battles ya apni table lagayein.</div>
+        <div id="openBattlesContainer"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 6px;">MY ACTIVE / RESULT MATCHES</h3>
+        <div id="myMatchesContainer"></div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div id="tab-wallet" class="hidden">
+      <div class="card">
+        <h3 style="margin:0 0 6px;">Add Payment (Deposit)</h3>
+        <input id="depositAmountInput" type="number" placeholder="Amount daalein" />
+        <select id="depositMethodInput">
+          <option value="UPI">UPI</option>
+          <option value="Card">Card</option>
+          <option value="NetBanking">NetBanking</option>
+        </select>
+        <button class="gold" onclick="depositMoney()">Add Money</button>
+
+        <div id="depositKycBox" class="hidden" style="margin-top:12px;padding-top:12px;border-top:1px solid #374151;">
+          <div style="font-size:13px;color:#fcd34d;font-weight:bold;">One-Time KYC Verification (Deposit)</div>
+          <div id="kycStateMsg" class="muted"></div>
+          <input id="kycNameInput" placeholder="KYC ke mutabik apna naam" />
+          <input type="file" accept="image/*" onchange="onKycFile(event)" />
+          <img id="kycPreview" class="preview hidden" />
+          <button class="gold" onclick="submitKyc()">Submit KYC for Admin Approval</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 6px;">Withdrawal</h3>
+        <input id="withdrawAmountInput" type="number" placeholder="Withdrawal amount" />
+        <input id="payoutDetailsInput" placeholder="UPI / Bank details" />
+        <button class="dark" onclick="withdrawMoney()">Request Withdrawal</button>
+      </div>
+
+      <div class="card">
+        <h3 style="margin:0 0 6px;">Transactions</h3>
+        <div id="txContainer"></div>
+      </div>
+    </div>
+
+    <!-- REFER -->
+    <div id="tab-refer" class="hidden">
+      <div class="card">
+        <h3>REFER & EARN</h3>
+        <p id="referDetailText" class="muted"></p>
+        <div class="bal-pill" id="myReferralCode"></div>
+      </div>
+    </div>
+
+    <!-- ME -->
+    <div id="tab-me" class="hidden">
+      <div class="card">
+        <h3>Profile & Help</h3>
+        <div id="profileDetails" class="muted"></div>
+        <button class="dark" style="margin-top:12px;" onclick="logoutUser()">Logout</button>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="tab-admin" class="hidden">
+      <div class="card">
+        <h3>Admin Settings</h3>
+        <input id="cfgNoticeInput" placeholder="Notice banner update" />
+        <input id="cfgCommissionInput" type="number" step="0.01" placeholder="Commission rate (e.g. 0.05)" />
+        <select id="cfgModeId">
+          <option value="ludo-classic">LUDO CLASSIC</option>
+          <option value="1-goti-ludo">1 GOTI LUDO</option>
+        </select>
+        <select id="cfgModeStatus">
+          <option value="live">live</option>
+          <option value="coming_soon">coming_soon</option>
+        </select>
+        <button class="gold" onclick="updateAdminConfig()">Save Settings</button>
+      </div>
+
+      <div class="card">
+        <h3>Pending KYC Documents</h3>
+        <div id="adminKycContainer"></div>
+      </div>
+
+      <div class="card">
+        <h3>Pending Match Results (Confirm to Update)</h3>
+        <div id="adminResultsContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-nav hidden" id="bottomNav">
+  <button class="active" onclick="goTab('home', this)">HOME</button>
+  <button onclick="goTab('lobby', this)">LOBBY</button>
+  <button onclick="goTab('wallet', this)">WALLET</button>
+  <button onclick="goTab('refer', this)">REFER</button>
+  <button onclick="goTab('me', this)">ME</button>
+  <button onclick="goTab('admin', this)">ADMIN</button>
+</div>
+
+<script>
+  const API = "/api";
+  let currentUser = null;
+  let state = null;
+  let kycBase64 = "";
+  let resultBase64 = "";
+  let chosenOutcome = "win";
+
+  function goTab(tab, btn) {
+    ["home", "lobby", "wallet", "refer", "me", "admin"].forEach((t) => {
+      document.getElementById("tab-" + t).classList.add("hidden");
+    });
+    document.getElementById("tab-" + tab).classList.remove("hidden");
+    document.querySelectorAll(".bottom-nav button").forEach((b) => b.classList.remove("active"));
+    if (btn) btn.classList.add("active");
+    syncState();
+  }
+
+  async function sendOtp() {
+    const phone = document.getElementById("phoneInput").value.trim();
+    const res = await fetch(`${API}/auth/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    document.getElementById("demoOtpHint").textContent = data.demoOtp
+      ? `Demo OTP: ${data.demoOtp}`
+      : data.message;
+  }
+
+  async function verifyOtp() {
+    const phone = document.getElementById("phoneInput").value.trim();
+    const otp = document.getElementById("otpInput").value.trim();
+    const name = document.getElementById("nameInput").value.trim();
+
+    const res = await fetch(`${API}/auth/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, otp, name })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+
+    currentUser = data.user;
+    localStorage.setItem("kp_user_id", currentUser.id);
+    document.getElementById("loginView").classList.add("hidden");
+    document.getElementById("appView").classList.remove("hidden");
+    document.getElementById("bottomNav").classList.remove("hidden");
+    await syncState();
+  }
+
+  function logoutUser() {
+    localStorage.removeItem("kp_user_id");
+    currentUser = null;
+    document.getElementById("appView").classList.add("hidden");
+    document.getElementById("bottomNav").classList.add("hidden");
+    document.getElementById("loginView").classList.remove("hidden");
+  }
+
+  async function syncState() {
+    const res = await fetch(`${API}/state`);
+    state = await res.json();
+    const savedId = localStorage.getItem("kp_user_id");
+    if (savedId) {
+      const found = state.users.find((u) => u.id === savedId);
+      if (found) {
+        currentUser = found;
+        document.getElementById("loginView").classList.add("hidden");
+        document.getElementById("appView").classList.remove("hidden");
+        document.getElementById("bottomNav").classList.remove("hidden");
+      }
+    }
+    if (!currentUser) return;
+
+    document.getElementById("topName").textContent = currentUser.name;
+    document.getElementById("topId").textContent = "ID: " + currentUser.id;
+    document.getElementById("topWallet").textContent = currentUser.walletBalance;
+    document.getElementById("topBonus").textContent = currentUser.bonusBalance;
+    document.getElementById("noticeBox").textContent = state.config.notice;
+    document.getElementById("referText").textContent = state.config.referralText;
+    document.getElementById("referDetailText").textContent = state.config.referralText;
+    document.getElementById("myReferralCode").textContent = "Referral ID: " + currentUser.id;
+    document.getElementById("profileDetails").innerHTML = `
+      Name: ${currentUser.name}<br/>
+      Phone: ${currentUser.phone}<br/>
+      KYC Status: ${currentUser.kyc?.status || "not_submitted"}<br/>
+      Help: Admin support ke zariye match result aur KYC verify kiye jaate hain.
+    `;
+
+    renderModes();
+    renderLobby();
+    renderWallet();
+    renderAdmin();
+  }
+
+  function renderModes() {
+    const grid = document.getElementById("modesGrid");
+    grid.innerHTML = "";
+    state.config.modes.forEach((m) => {
+      const isLive = m.status === "live";
+      const card = document.createElement("div");
+      card.className = "mode-card" + (isLive ? "" : " locked");
+      card.innerHTML = `
+        <span class="badge ${isLive ? "live" : "soon"}">${isLive ? "LIVE" : "COMING SOON"}</span>
+        <div class="mode-title">${m.title}</div>
+      `;
+      card.onclick = () => {
+        if (!isLive) return alert("1 Goti Ludo abhi COMING SOON hai.");
+        const lobbyBtn = document.querySelectorAll(".bottom-nav button")[1];
+        goTab("lobby", lobbyBtn);
+      };
+      grid.appendChild(card);
+    });
+  }
+
+  async function createBattle() {
+    const entryAmount = document.getElementById("entryAmountInput").value;
+    const res = await fetch(`${API}/battles/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id, entryAmount, modeId: "ludo-classic" })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    document.getElementById("entryAmountInput").value = "";
+    await syncState();
+  }
+
+  async function joinBattle(id) {
+    const res = await fetch(`${API}/battles/${id}/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    await syncState();
+  }
+
+  async function sendRoomCode(id) {
+    const roomCode = document.getElementById("rc_" + id).value;
+    const res = await fetch(`${API}/battles/${id}/room-code`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ roomCode })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    await syncState();
+  }
+
+  function onResultFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      resultBase64 = reader.result;
+      const img = document.getElementById("resPreview");
+      if (img) {
+        img.src = resultBase64;
+        img.classList.remove("hidden");
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function submitMatchResult(battleId) {
+    if (!resultBase64) return alert("Winner screenshot select karein");
+    const res = await fetch(`${API}/battles/${battleId}/submit-result`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.id,
+        outcome: chosenOutcome,
+        screenshotBase64: resultBase64
+      })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    resultBase64 = "";
+    alert("Submit ho gaya. Admin confirm karne ke baad update hoga.");
+    await syncState();
+  }
+
+  function renderLobby() {
+    const openBox = document.getElementById("openBattlesContainer");
+    const myBox = document.getElementById("myMatchesContainer");
+    openBox.innerHTML = "";
+    myBox.innerHTML = "";
+
+    const openList = state.battles.filter((b) => b.status === "open");
+    if (!openList.length) {
+      openBox.innerHTML = `<div class="muted" style="margin-top:8px;">Koi open table nahi hai.</div>`;
+    } else {
+      openList.forEach((b) => {
+        const mine = b.creatorId === currentUser.id;
+        openBox.innerHTML += `
+          <div class="battle-row">
+            <div>
+              <div style="font-weight:bold;">${b.creatorName}</div>
+              <div style="font-size:11px;color:#f7d060;font-weight:bold;">OPEN CHALLENGE</div>
+              <div style="font-size:12px;">ENTRY: ₹${b.entry} | PRIZE: ₹${b.prize}</div>
+            </div>
+            <div style="width:105px;">
+              ${mine ? `<span class="muted">Aapki Table</span>` : `<button class="gold" onclick="joinBattle('${b.id}')">Play Now</button>`}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    const mineMatches = state.battles.filter(
+      (b) => (b.creatorId === currentUser.id || b.opponentId === currentUser.id) && b.status !== "open"
+    );
+    if (!mineMatches.length) {
+      myBox.innerHTML = `<div class="muted">Koi active ya completed match nahi hai.</div>`;
+    } else {
+      mineMatches.forEach((m) => {
+        myBox.innerHTML += `
+          <div class="battle-row" style="display:block;">
+            <div style="font-weight:bold;">${m.creatorName} vs ${m.opponentName || "..."}</div>
+            <div class="muted">Entry: ₹${m.entry} | Prize: ₹${m.prize} | Status: ${m.status}</div>
+            <input id="rc_${m.id}" value="${m.roomCode || ""}" placeholder="Room Code daalein (dono ko dikhega)" />
+            <button class="dark" onclick="sendRoomCode('${m.id}')">Share Room Code</button>
+            ${m.status === "active" ? `
+              <div style="margin-top:10px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                  <button class="gold" onclick="chosenOutcome='win'">Win</button>
+                  <button class="dark" onclick="chosenOutcome='lost'">Lost</button>
+                </div>
+                <input type="file" accept="image/*" onchange="onResultFile(event)" />
+                <img id="resPreview" class="preview hidden" />
+                <button class="gold" onclick="submitMatchResult('${m.id}')">Submit</button>
+              </div>
+            ` : ""}
+          </div>
+        `;
+      });
+    }
+  }
+
+  function onKycFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      kycBase64 = reader.result;
+      const img = document.getElementById("kycPreview");
+      img.src = kycBase64;
+      img.classList.remove("hidden");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function submitKyc() {
+    const kycName = document.getElementById("kycNameInput").value.trim();
+    const res = await fetch(`${API}/kyc/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id, kycName, docBase64: kycBase64 })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    kycBase64 = "";
+    alert("KYC document admin ke paas bhej diya gaya hai.");
+    await syncState();
+  }
+
+  async function depositMoney() {
+    const amount = document.getElementById("depositAmountInput").value;
+    const method = document.getElementById("depositMethodInput").value;
+    const res = await fetch(`${API}/wallet/deposit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id, amount, method })
+    });
+    const data = await res.json();
+    if (data.code === "KYC_REQUIRED_FOR_DEPOSIT") {
+      document.getElementById("depositKycBox").classList.remove("hidden");
+      return alert(data.error);
+    }
+    if (data.error) return alert(data.error);
+    document.getElementById("depositAmountInput").value = "";
+    await syncState();
+  }
+
+  async function withdrawMoney() {
+    const amount = document.getElementById("withdrawAmountInput").value;
+    const payoutDetails = document.getElementById("payoutDetailsInput").value;
+    const res = await fetch(`${API}/wallet/withdraw`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: currentUser.id, amount, payoutDetails })
+    });
+    const data = await res.json();
+    if (data.error) return alert(data.error);
+    document.getElementById("withdrawAmountInput").value = "";
+    await syncState();
+  }
+
+  function renderWallet() {
+    const kycBox = document.getElementById("depositKycBox");
+    const kycStatus = currentUser.kyc?.status || "not_submitted";
+    if (kycStatus === "approved") {
+      kycBox.classList.add("hidden");
+    } else {
+      kycBox.classList.remove("hidden");
+      document.getElementById("kycStateMsg").textContent = "Current KYC status: " + kycStatus;
+    }
+
+    const txBox = document.getElementById("txContainer");
+    txBox.innerHTML = "";
+    (currentUser.transactions || []).forEach((t) => {
+      txBox.innerHTML += `<div class="muted" style="padding:6px 0;border-bottom:1px solid #272d3b;">${t.type} | ₹${t.amount} | ${t.status}</div>`;
+    });
+  }
+
+  async function updateAdminConfig() {
+    await fetch(`${API}/admin/config`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        notice: document.getElementById("cfgNoticeInput").value,
+        commissionRate: document.getElementById("cfgCommissionInput").value,
+        modeId: document.getElementById("cfgModeId").value,
+        modeStatus: document.getElementById("cfgModeStatus").value
+      })
+    });
+    await syncState();
+  }
+
+  async function reviewKyc(userId, approve) {
+    await fetch(`${API}/admin/kyc/${userId}/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ approve })
+    });
+    await syncState();
+  }
+
+  async function confirmResult(battleId, approve) {
+    await fetch(`${API}/admin/battles/${battleId}/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ approve })
+    });
+    await syncState();
+  }
+
+  function renderAdmin() {
+    const kycBox = document.getElementById("adminKycContainer");
+    kycBox.innerHTML = "";
+    const pendingKyc = state.users.filter((u) => u.kyc && u.kyc.status === "pending");
+    if (!pendingKyc.length) {
+      kycBox.innerHTML = `<div class="muted">Koi pending KYC document nahi hai.</div>`;
+    } else {
+      pendingKyc.forEach((u) => {
+        kycBox.innerHTML += `
+          <div class="battle-row" style="display:block;">
+            <div><strong>${u.name}</strong> (${u.phone}) — KYC Name: <strong>${u.kyc.kycName}</strong></div>
+            <img class="preview" src="${u.kyc.docUrl}" />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+              <button class="gold" onclick="reviewKyc('${u.id}', true)">Approve KYC</button>
+              <button class="dark" onclick="reviewKyc('${u.id}', false)">Reject</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    const resBox = document.getElementById("adminResultsContainer");
+    resBox.innerHTML = "";
+    const pendingRes = state.battles.filter((b) => b.status === "pending_admin_approval");
+    if (!pendingRes.length) {
+      resBox.innerHTML = `<div class="muted">Koi pending match result nahi hai.</div>`;
+    } else {
+      pendingRes.forEach((b) => {
+        const sub = b.resultSubmission;
+        resBox.innerHTML += `
+          <div class="battle-row" style="display:block;">
+            <div><strong>${b.creatorName}</strong> vs <strong>${b.opponentName}</strong></div>
+            <div class="muted">Claim: ${sub.submittedByName} -> ${sub.outcome.toUpperCase()} | Prize: ₹${b.prize}</div>
+            <img class="preview" src="${sub.screenshotUrl}" />
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+              <button class="gold" onclick="confirmResult('${b.id}', true)">Confirm & Update</button>
+              <button class="dark" onclick="confirmResult('${b.id}', false)">Reject</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+  }
+
+  syncState();
+</script>
+</body>
+</html>
