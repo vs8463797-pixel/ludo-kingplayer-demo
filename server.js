@@ -14,7 +14,7 @@ fs.mkdirSync(KYC_DIR, { recursive: true });
 app.use(cors());
 app.use(express.json({ limit: "15mb" }));
 app.use("/uploads", express.static(UPLOAD_DIR));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(__dirname));
 
 const otpStore = new Map();
 
@@ -23,7 +23,12 @@ function calculatePrize(entryAmount, commissionRate) {
   return Number((totalPool * (1 - Number(commissionRate || 0))).toFixed(2));
 }
 
-// Send OTP to mobile/SIM
+// Serve root index.html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
+// Send OTP to user mobile/SIM
 app.post("/api/auth/send-otp", (req, res) => {
   const cleanPhone = String(req.body.phone || "").trim();
   if (!cleanPhone) {
@@ -42,7 +47,7 @@ app.post("/api/auth/send-otp", (req, res) => {
   });
 });
 
-// Verify OTP and keep existing ID details
+// Verify OTP and keep existing user ID & details
 app.post("/api/auth/verify-otp", (req, res) => {
   const cleanPhone = String(req.body.phone || "").trim();
   const otp = String(req.body.otp || "").trim();
@@ -79,12 +84,12 @@ app.post("/api/auth/verify-otp", (req, res) => {
   res.json({ user, config: db.config });
 });
 
-// App state
+// Full app state
 app.get("/api/state", (req, res) => {
   res.json(loadData());
 });
 
-// One-time KYC submission for deposit
+// One-time KYC submission (for deposit when not yet approved)
 app.post("/api/kyc/submit", (req, res) => {
   const { userId, kycName, docBase64 } = req.body;
   if (!userId || !String(kycName || "").trim() || !docBase64) {
@@ -190,7 +195,7 @@ app.post("/api/wallet/withdraw", (req, res) => {
   res.json({ user });
 });
 
-// Create manual battle table with creator name and automatic prize
+// Create battle table with creator name and automatic prize calculation
 app.post("/api/battles/create", (req, res) => {
   const { userId, entryAmount, modeId } = req.body;
   const entry = Number(entryAmount);
@@ -237,7 +242,7 @@ app.post("/api/battles/create", (req, res) => {
   res.json({ battle, user: creator });
 });
 
-// Join battle
+// Join open battle
 app.post("/api/battles/:id/join", (req, res) => {
   const { userId } = req.body;
   const db = loadData();
